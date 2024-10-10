@@ -88,22 +88,22 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += litecoind
+  bin_PROGRAMS += stratumcoind
 endif
 
 if BUILD_BITCOIN_NODE
-  bin_PROGRAMS += litecoin-node
+  bin_PROGRAMS += stratumcoin-node
 endif
 
 if BUILD_BITCOIN_CLI
-  bin_PROGRAMS += litecoin-cli
+  bin_PROGRAMS += stratumcoin-cli
 endif
 if BUILD_BITCOIN_TX
-  bin_PROGRAMS += litecoin-tx
+  bin_PROGRAMS += stratumcoin-tx
 endif
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
-  bin_PROGRAMS += litecoin-wallet
+  bin_PROGRAMS += stratumcoin-wallet
 endif
 endif
 
@@ -111,14 +111,116 @@ LIBMW_CPPFLAGS = -I$(srcdir) -I$(srcdir)/libmw/include -I$(srcdir)/libmw/deps/cr
 libmw_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(LIBMW_CPPFLAGS)
 libmw_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libmw_a_SOURCES = \
+	libmw/deps/caches/include/caches/internal/cache_policy.hpp \
+	libmw/deps/caches/include/caches/internal/cache.hpp \
+	libmw/deps/caches/include/caches/internal/fifo_cache_policy.hpp \
+	libmw/deps/caches/include/caches/internal/lfu_cache_policy.hpp \
+	libmw/deps/caches/include/caches/internal/lru_cache_policy.hpp \
+	libmw/deps/caches/include/caches/Cache.h \
+	libmw/deps/ghc/include/ghc/filesystem.hpp \
+	libmw/deps/ghc/include/ghc/fs_fwd.hpp \
+	libmw/deps/ghc/include/ghc/fs_impl.hpp \
+	libmw/deps/ghc/include/ghc/fs_std_fwd.hpp \
+	libmw/deps/ghc/include/ghc/fs_std_impl.hpp \
+	libmw/deps/ghc/include/ghc/fs_std.hpp \
+	libmw/deps/mio/include/mio/mmap.hpp \
+	libmw/include/mw/common/BitSet.h \
+	libmw/include/mw/common/Lock.h \
+	libmw/include/mw/common/Logger.h \
+	libmw/include/mw/common/Macros.h \
+	libmw/include/mw/common/Traits.h \
+	libmw/include/mw/consensus/Aggregation.h \
+	libmw/include/mw/consensus/KernelSumValidator.h \
+	libmw/include/mw/consensus/Params.h \
+	libmw/include/mw/consensus/StealthSumValidator.h \
+	libmw/include/mw/consensus/Weight.h \
+	libmw/include/mw/crypto/Blinds.h \
+	libmw/include/mw/crypto/Bulletproofs.h \
+	libmw/include/mw/crypto/Keys.h \
+	libmw/include/mw/crypto/MuSig.h \
+	libmw/include/mw/crypto/Pedersen.h \
+	libmw/include/mw/crypto/PublicKeys.h \
+	libmw/include/mw/crypto/Schnorr.h \
+	libmw/include/mw/crypto/SecretKeys.h \
+	libmw/include/mw/db/CoinDB.h \
+	libmw/include/mw/db/LeafDB.h \
+	libmw/include/mw/db/MMRInfoDB.h \
+	libmw/include/mw/exceptions/CryptoException.h \
+	libmw/include/mw/exceptions/DatabaseException.h \
+	libmw/include/mw/exceptions/DeserializationException.h \
+	libmw/include/mw/exceptions/FileException.h \
+	libmw/include/mw/exceptions/InsufficientFundsException.h \
+	libmw/include/mw/exceptions/LTCException.h \
+	libmw/include/mw/exceptions/NotFoundException.h \
+	libmw/include/mw/exceptions/ValidationException.h \
+	libmw/include/mw/file/AppendOnlyFile.h \
+	libmw/include/mw/file/File.h \
+	libmw/include/mw/file/FilePath.h \
+	libmw/include/mw/file/MemMap.h \
+	libmw/include/mw/interfaces/db_interface.h \
+	libmw/include/mw/mmr/Index.h \
+	libmw/include/mw/mmr/Leaf.h \
+	libmw/include/mw/mmr/LeafIndex.h \
+	libmw/include/mw/mmr/LeafSet.h \
+	libmw/include/mw/mmr/MMR.h \
+	libmw/include/mw/mmr/MMRInfo.h \
+	libmw/include/mw/mmr/MMRUtil.h \
+	libmw/include/mw/mmr/PruneList.h \
+	libmw/include/mw/mmr/Segment.h \
+	libmw/include/mw/models/block/Block.h \
+	libmw/include/mw/models/block/BlockUndo.h \
+	libmw/include/mw/models/block/Header.h \
+	libmw/include/mw/models/crypto/BigInteger.h \
+	libmw/include/mw/models/crypto/BlindingFactor.h \
+	libmw/include/mw/models/crypto/Commitment.h \
+	libmw/include/mw/models/crypto/Hash.h \
+	libmw/include/mw/models/crypto/ProofData.h \
+	libmw/include/mw/models/crypto/ProofMessage.h \
+	libmw/include/mw/models/crypto/PublicKey.h \
+	libmw/include/mw/models/crypto/RangeProof.h \
+	libmw/include/mw/models/crypto/RewoundProof.h \
+	libmw/include/mw/models/crypto/SecretKey.h \
+	libmw/include/mw/models/crypto/Signature.h \
+	libmw/include/mw/models/crypto/SignedMessage.h \
+	libmw/include/mw/models/tx/Input.h \
+	libmw/include/mw/models/tx/Kernel.h \
+	libmw/include/mw/models/tx/Output.h \
+	libmw/include/mw/models/tx/OutputMask.h \
+	libmw/include/mw/models/tx/PegInCoin.h \
+	libmw/include/mw/models/tx/PegOutCoin.h \
+	libmw/include/mw/models/tx/Transaction.h \
+	libmw/include/mw/models/tx/TxBody.h \
+	libmw/include/mw/models/tx/UTXO.h \
+	libmw/include/mw/models/wallet/Coin.h \
+	libmw/include/mw/models/wallet/KeyChainPath.h \
+	libmw/include/mw/models/wallet/Recipient.h \
+	libmw/include/mw/models/wallet/StealthAddress.h \
+	libmw/include/mw/node/BlockBuilder.h \
+	libmw/include/mw/node/BlockValidator.h \
+	libmw/include/mw/node/CoinsView.h \
+	libmw/include/mw/util/BitUtil.h \
+	libmw/include/mw/util/StringUtil.h \
+	libmw/include/mw/util/VectorUtil.h \
+	libmw/include/mw/wallet/Keychain.h \
+	libmw/include/mw/wallet/TxBuilder.h \
 	libmw/src/common/Logger.cpp \
 	libmw/src/crypto/Bulletproofs.cpp \
+	libmw/src/crypto/Context.h \
 	libmw/src/crypto/ConversionUtil.cpp \
+	libmw/src/crypto/ConversionUtil.h \
+	libmw/src/crypto/Hasher.cpp \
 	libmw/src/crypto/MuSig.cpp \
 	libmw/src/crypto/Pedersen.cpp \
 	libmw/src/crypto/PublicKeys.cpp \
 	libmw/src/crypto/Schnorr.cpp \
+	libmw/src/crypto/secp256k1-zkp.h \
 	libmw/src/crypto/SecretKeys.cpp \
+	libmw/src/db/common/Database.h \
+	libmw/src/db/common/DBEntry.h \
+	libmw/src/db/common/DBTable.h \
+	libmw/src/db/common/DBTransaction.h \
+	libmw/src/db/common/OrderedMultimap.h \
+	libmw/src/db/common/SerializableVec.h \
 	libmw/src/db/CoinDB.cpp \
 	libmw/src/db/LeafDB.cpp \
 	libmw/src/db/MMRInfoDB.cpp \
@@ -144,10 +246,16 @@ libmw_a_SOURCES = \
 	libmw/src/models/tx/TxBody.cpp \
 	libmw/src/node/BlockValidator.cpp \
 	libmw/src/node/BlockBuilder.cpp \
+	libmw/src/node/CoinActions.h \
 	libmw/src/node/CoinsViewCache.cpp \
 	libmw/src/node/CoinsViewDB.cpp \
 	libmw/src/wallet/Keychain.cpp \
-	libmw/src/wallet/TxBuilder.cpp
+	libmw/src/wallet/TxBuilder.cpp \
+  crypto/blake3/blake3.c \
+  crypto/blake3/blake3.h \
+  crypto/blake3/blake3_dispatch.c \
+  crypto/blake3/blake3_impl.h \
+  crypto/blake3/blake3_portable.c
 
 .PHONY: FORCE check-symbols check-security
 # bitcoin core #
@@ -178,6 +286,7 @@ BITCOIN_CORE_H = \
   consensus/consensus.h \
   consensus/tx_check.h \
   consensus/tx_verify.h \
+	libmw/include/mw/crypto/Hasher.h \
   core_io.h \
   core_memusage.h \
   cuckoocache.h \
@@ -315,6 +424,8 @@ BITCOIN_CORE_H = \
   wallet/scriptpubkeyman.h \
   wallet/sqlite.h \
   wallet/txassembler.h \
+	wallet/txrecord.h \
+	wallet/txlist.h \
   wallet/wallet.h \
   wallet/walletdb.h \
   wallet/wallettool.h \
@@ -454,6 +565,7 @@ libbitcoin_wallet_tool_a_SOURCES = \
   $(BITCOIN_CORE_H)
 
 # crypto primitives library
+crypto_libbitcoin_crypto_base_a_CFLAGS = $(AM_CFLAGS)
 crypto_libbitcoin_crypto_base_a_CPPFLAGS = $(AM_CPPFLAGS) $(SSL_CFLAGS) $(BITCOIN_INCLUDES)
 crypto_libbitcoin_crypto_base_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libbitcoin_crypto_base_a_SOURCES = \
@@ -644,16 +756,16 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
 # bitcoind & bitcoin-node binaries #
-litecoin_daemon_sources = bitcoind.cpp
-litecoin_bin_cppflags = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-litecoin_bin_cxxflags = $(AM_CXXFLAGS) $(PIE_FLAGS)
-litecoin_bin_ldflags = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+stratumcoin_daemon_sources = bitcoind.cpp
+stratumcoin_bin_cppflags = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+stratumcoin_bin_cxxflags = $(AM_CXXFLAGS) $(PIE_FLAGS)
+stratumcoin_bin_ldflags = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-litecoin_daemon_sources += bitcoind-res.rc
+stratumcoin_daemon_sources += bitcoind-res.rc
 endif
 
-litecoin_bin_ldadd = \
+stratumcoin_bin_ldadd = \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -667,50 +779,50 @@ litecoin_bin_ldadd = \
   $(LIBSECP256K1) \
   $(LIBMW)
 
-litecoin_bin_ldadd += $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(SQLITE_LIBS) $(MWEB_LIBS)
+stratumcoin_bin_ldadd += $(BOOST_LIBS) $(BDB_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(SQLITE_LIBS) $(MWEB_LIBS)
 
-litecoind_SOURCES = $(litecoin_daemon_sources)
-litecoind_CPPFLAGS = $(litecoin_bin_cppflags)
-litecoind_CXXFLAGS = $(litecoin_bin_cxxflags)
-litecoind_LDFLAGS = $(litecoin_bin_ldflags)
-litecoind_LDADD = $(LIBBITCOIN_SERVER) $(litecoin_bin_ldadd)
+stratumcoind_SOURCES = $(stratumcoin_daemon_sources)
+stratumcoind_CPPFLAGS = $(stratumcoin_bin_cppflags)
+stratumcoind_CXXFLAGS = $(stratumcoin_bin_cxxflags)
+stratumcoind_LDFLAGS = $(stratumcoin_bin_ldflags)
+stratumcoind_LDADD = $(LIBBITCOIN_SERVER) $(stratumcoin_bin_ldadd)
 
-litecoin_node_SOURCES = $(litecoin_daemon_sources)
-litecoin_node_CPPFLAGS = $(litecoin_bin_cppflags)
-litecoin_node_CXXFLAGS = $(litecoin_bin_cxxflags)
-litecoin_node_LDFLAGS = $(litecoin_bin_ldflags)
-litecoin_node_LDADD = $(LIBBITCOIN_SERVER) $(litecoin_bin_ldadd)
+stratumcoin_node_SOURCES = $(stratumcoin_daemon_sources)
+stratumcoin_node_CPPFLAGS = $(stratumcoin_bin_cppflags)
+stratumcoin_node_CXXFLAGS = $(stratumcoin_bin_cxxflags)
+stratumcoin_node_LDFLAGS = $(stratumcoin_bin_ldflags)
+stratumcoin_node_LDADD = $(LIBBITCOIN_SERVER) $(stratumcoin_bin_ldadd)
 
 # bitcoin-cli binary #
-litecoin_cli_SOURCES = bitcoin-cli.cpp
-litecoin_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-litecoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-litecoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+stratumcoin_cli_SOURCES = bitcoin-cli.cpp
+stratumcoin_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+stratumcoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+stratumcoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-litecoin_cli_SOURCES += bitcoin-cli-res.rc
+stratumcoin_cli_SOURCES += bitcoin-cli-res.rc
 endif
 
-litecoin_cli_LDADD = \
+stratumcoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
 
-litecoin_cli_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS) $(MWEB_LIBS)
+stratumcoin_cli_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS) $(MWEB_LIBS)
 #
 
 # bitcoin-tx binary #
-litecoin_tx_SOURCES = bitcoin-tx.cpp
-litecoin_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-litecoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-litecoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+stratumcoin_tx_SOURCES = bitcoin-tx.cpp
+stratumcoin_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+stratumcoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+stratumcoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-litecoin_tx_SOURCES += bitcoin-tx-res.rc
+stratumcoin_tx_SOURCES += bitcoin-tx-res.rc
 endif
 
-litecoin_tx_LDADD = \
+stratumcoin_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -719,17 +831,17 @@ litecoin_tx_LDADD = \
   $(LIBSECP256K1) \
   $(LIBMW)
 
-litecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(MWEB_LIBS)
+stratumcoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(MWEB_LIBS)
 
 # bitcoin-wallet binary #
-litecoin_wallet_SOURCES = bitcoin-wallet.cpp
-litecoin_wallet_CPPFLAGS = $(litecoin_bin_cppflags)
-litecoin_wallet_CXXFLAGS = $(litecoin_bin_cxxflags)
-litecoin_wallet_LDFLAGS = $(litecoin_bin_ldflags)
-litecoin_wallet_LDADD = $(LIBBITCOIN_WALLET_TOOL) $(litecoin_bin_ldadd)
+stratumcoin_wallet_SOURCES = bitcoin-wallet.cpp
+stratumcoin_wallet_CPPFLAGS = $(stratumcoin_bin_cppflags)
+stratumcoin_wallet_CXXFLAGS = $(stratumcoin_bin_cxxflags)
+stratumcoin_wallet_LDFLAGS = $(stratumcoin_bin_ldflags)
+stratumcoin_wallet_LDADD = $(LIBBITCOIN_WALLET_TOOL) $(stratumcoin_bin_ldadd)
 
 if TARGET_WINDOWS
-litecoin_wallet_SOURCES += bitcoin-wallet-res.rc
+stratumcoin_wallet_SOURCES += bitcoin-wallet-res.rc
 endif
 #
 
