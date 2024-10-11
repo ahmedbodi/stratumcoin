@@ -137,6 +137,8 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
 
+        vSeeds.emplace_back("stratumcoin.seeds.multicoin.co"); // Run by ahmedbodi of multicoin.co Pool
+
         fDefaultConsistencyChecks = true;
         fRequireStandard = true;
         m_is_test_chain = true;
